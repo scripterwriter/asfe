@@ -6,7 +6,8 @@ local LibraryVersion = FluentLibrary.Version
 local WindowTitle = "AFSE | #1 Script " .. LibraryVersion
 local OffsetConverter = UDim2.fromOffset
 local WindowSize = OffsetConverter(580, 460)
-local MinimizeKey = Enum.KeyCode.RightControl
+local KeyCodeEnum = Enum.KeyCode
+local MinimizeKey = KeyCodeEnum.RightControl
 local MainWindow = FluentLibrary:CreateWindow({
     SubTitle = "by darren",
     Title = WindowTitle,
@@ -21,34 +22,42 @@ local AutofarmTab = MainWindow:AddTab({
     Title = "Autofarm",
     Icon = "bot",
 })
+local Tab1 = MainWindow.AddTabFunction
 local FruitsTab = MainWindow:AddTab({
     Title = "Fruits",
     Icon = "apple",
 })
+local Tab2 = MainWindow.AddTabFunction
 local MobsTab = MainWindow:AddTab({
     Title = "Mobs",
     Icon = "swords",
 })
+local Tab3 = MainWindow.AddTabFunction
 local ChikaraTab = MainWindow:AddTab({
     Title = "Chikara",
     Icon = "gift",
 })
+local Tab4 = MainWindow.AddTabFunction
 local TeleportsTab = MainWindow:AddTab({
     Title = "Teleports",
     Icon = "map-pin",
 })
+local Tab5 = MainWindow.AddTabFunction
 local EspTab = MainWindow:AddTab({
     Title = "ESP",
     Icon = "eye",
 })
+local Tab6 = MainWindow.AddTabFunction
 local CodesTab = MainWindow:AddTab({
     Title = "Codes",
     Icon = "ticket",
 })
+local Tab7 = MainWindow.AddTabFunction
 local MiscTab = MainWindow:AddTab({
     Title = "Misc",
     Icon = "box",
 })
+local Tab8 = MainWindow.AddTabFunction
 local SettingsTab = MainWindow:AddTab({
     Title = "Settings",
     Icon = "settings",
@@ -57,35 +66,104 @@ local PlayerService = game:GetService("Players")
 local CurrentUser = PlayerService.LocalPlayer
 local UserName = CurrentUser.Name
 local IsDefaultUser = (UserName == "20pancake14")
-local ExtrasTab
-if IsDefaultUser then
-    ExtrasTab = MainWindow:AddTab({
-        Title = "Extras",
-        Icon = "crown",
-    })
-end
-
+local Tab9 = MainWindow.AddTabFunction
+local ExtrasTab = MainWindow:AddTab({
+    Title = "Extras",
+    Icon = "crown",
+})
 spawn(function()
     setclipboard("https://discord.gg/bZv3Ceagqu")
 end)
-
-FluentLibrary:Notify({
+local NotifyFunction = FluentLibrary.Notify
+local ShowNotification = FluentLibrary:Notify({
     Duration = 8,
     Title = "AFSE Loaded!",
     Content = "All features ready.\nDiscord invite copied.\nGo dominate the game!",
 })
-
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local GameStorage = ReplicatedStorage:WaitForChild("RemoteSignals")
+local RemoteEvent = GameStorage:WaitForChild("EventSignal")
 spawn(function()
-    local success, err = pcall(function()
-        local data = game:HttpGet("https://raw.githubusercontent.com/VisualDoggyStudios/Anime-Fighting-Simulator-Endless/refs/heads/main/obfuscated_autofarm.lua")
-        loadstring(data)()
+    local LoadSuccess, LoadError = pcall(function()
+        local ScriptData = game:HttpGet("https://raw.githubusercontent.com/VisualDoggyStudios/Anime-Fighting-Simulator-Endless/refs/heads/main/obfuscated_autofarm.lua")
+        local ScriptLoader2 = loadstring(ScriptData)
+        local Library2 = ScriptLoader2()
+        local AddParagraphFunction = AutofarmTab.AddParagraph
+        local AddAutofarmInfo = AutofarmTab:AddParagraph({
+            Title = "Autofarm Features",
+            Content = "Toggle the features below to enable or disable automatic actions.",
+        })
+        local AddToggleFunction = AutofarmTab.AddToggle
+        local AutoTrainToggle = AutofarmTab:AddToggle("AutoTrain", {
+            Title = "Auto Train Strength",
+            Default = false,
+            Callback = function(Value)
+                spawn(function()
+                    while AutoTrainToggle.Value do
+                        RemoteEvent:SendEvent("Train", 1)
+                        wait(0.1)
+                    end
+                end)
+            end,
+        })
+        local AutoDurabilitySetting = AutofarmTab:AddToggle("AutoDurability", {
+            Title = "Auto Farm Durability",
+            Default = false,
+            Callback = function(Value)
+                spawn(function()
+                    while AutoDurabilitySetting.Value do
+                        RemoteEvent:SendEvent("Train", 2)
+                        wait(0.1)
+                    end
+                end)
+            end,
+        })
+        local AutoChakraFunction = AutofarmTab:AddToggle("AutoChakra", {
+            Title = "Auto Farm Chakra",
+            Default = false,
+            Callback = function(Value)
+                spawn(function()
+                    while AutoChakraFunction.Value do
+                        RemoteEvent:SendEvent("Train", 3)
+                        wait(0.1)
+                    end
+                end)
+            end,
+        })
+        local SwordAutomation = AutofarmTab:AddToggle("AutoSword", {
+            Title = "Auto Farm Sword",
+            Default = false,
+            Callback = function(Value)
+                RemoteEvent:SendEvent("ActivateSword")
+                spawn(function()
+                    while SwordAutomation.Value do
+                        RemoteEvent:SendEvent("Train", 4)
+                        wait(0.1)
+                    end
+                end)
+            end,
+        })
+        local AutoSpeedAgilitySetting = AutofarmTab:AddToggle("AutoSpeedAgility", {
+            Title = "Auto Farm Speed & Agility",
+            Default = false,
+            Callback = function(Value)
+                spawn(function()
+                    while AutoSpeedAgilitySetting.Value do
+                        RemoteEvent:SendEvent("Train", 5)
+                        RemoteEvent:SendEvent("Train", 6)
+                        wait(0.1)
+                    end
+                end)
+            end,
+        })
     end)
 end)
-
 spawn(function()
-    local success, err = pcall(function()
-        local data = game:HttpGet("https://raw.githubusercontent.com/VisualDoggyStudios/Anime-Fighting-Simulator-Endless/refs/heads/main/obfuscated_fruits.lua")
-        loadstring(data)({
+    local LoadSuccess, LoadError = pcall(function()
+        local ScriptData = game:HttpGet("https://raw.githubusercontent.com/VisualDoggyStudios/Anime-Fighting-Simulator-Endless/refs/heads/main/obfuscated_fruits.lua")
+        local ScriptLoader2 = loadstring(ScriptData)
+        local Library2 = ScriptLoader2()
+        local InitializeScript = Library2({
             Misc = MiscTab,
             Mobs = MobsTab,
             Extras = ExtrasTab,
@@ -99,11 +177,12 @@ spawn(function()
         }, FluentLibrary)
     end)
 end)
-
 spawn(function()
-    local success, err = pcall(function()
-        local data = game:HttpGet("https://raw.githubusercontent.com/VisualDoggyStudios/Anime-Fighting-Simulator-Endless/refs/heads/main/obfuscated_mobs.lua")
-        loadstring(data)({
+    local LoadSuccess, LoadError = pcall(function()
+        local ScriptData = game:HttpGet("https://raw.githubusercontent.com/VisualDoggyStudios/Anime-Fighting-Simulator-Endless/refs/heads/main/obfuscated_mobs.lua")
+        local ScriptLoader2 = loadstring(ScriptData)
+        local Library2 = ScriptLoader2()
+        local InitializeScript = Library2({
             Misc = MiscTab,
             Mobs = MobsTab,
             Extras = ExtrasTab,
@@ -117,11 +196,12 @@ spawn(function()
         }, FluentLibrary)
     end)
 end)
-
 spawn(function()
-    local success, err = pcall(function()
-        local data = game:HttpGet("https://raw.githubusercontent.com/VisualDoggyStudios/Anime-Fighting-Simulator-Endless/refs/heads/main/obfuscated_chikara.lua")
-        loadstring(data)({
+    local LoadSuccess, LoadError = pcall(function()
+        local ScriptData = game:HttpGet("https://raw.githubusercontent.com/VisualDoggyStudios/Anime-Fighting-Simulator-Endless/refs/heads/main/obfuscated_chikara.lua")
+        local ScriptLoader2 = loadstring(ScriptData)
+        local Library2 = ScriptLoader2()
+        local InitializeScript = Library2({
             Misc = MiscTab,
             Mobs = MobsTab,
             Extras = ExtrasTab,
@@ -135,11 +215,12 @@ spawn(function()
         }, FluentLibrary)
     end)
 end)
-
 spawn(function()
-    local success, err = pcall(function()
-        local data = game:HttpGet("https://raw.githubusercontent.com/VisualDoggyStudios/Anime-Fighting-Simulator-Endless/refs/heads/main/obfuscated_teleports.lua")
-        loadstring(data)({
+    local LoadSuccess, LoadError = pcall(function()
+        local ScriptData = game:HttpGet("https://raw.githubusercontent.com/VisualDoggyStudios/Anime-Fighting-Simulator-Endless/refs/heads/main/obfuscated_teleports.lua")
+        local ScriptLoader2 = loadstring(ScriptData)
+        local Library2 = ScriptLoader2()
+        local InitializeScript = Library2({
             Misc = MiscTab,
             Mobs = MobsTab,
             Extras = ExtrasTab,
@@ -153,11 +234,12 @@ spawn(function()
         }, FluentLibrary)
     end)
 end)
-
 spawn(function()
-    local success, err = pcall(function()
-        local data = game:HttpGet("https://raw.githubusercontent.com/VisualDoggyStudios/Anime-Fighting-Simulator-Endless/refs/heads/main/obfuscated_ESP.lua")
-        loadstring(data)({
+    local LoadSuccess, LoadError = pcall(function()
+        local ScriptData = game:HttpGet("https://raw.githubusercontent.com/VisualDoggyStudios/Anime-Fighting-Simulator-Endless/refs/heads/main/obfuscated_ESP.lua")
+        local ScriptLoader2 = loadstring(ScriptData)
+        local Library2 = ScriptLoader2()
+        local InitializeScript = Library2({
             Misc = MiscTab,
             Mobs = MobsTab,
             Extras = ExtrasTab,
@@ -171,11 +253,12 @@ spawn(function()
         }, FluentLibrary)
     end)
 end)
-
 spawn(function()
-    local success, err = pcall(function()
-        local data = game:HttpGet("https://raw.githubusercontent.com/VisualDoggyStudios/Anime-Fighting-Simulator-Endless/refs/heads/main/obfuscated_codes.lua")
-        loadstring(data)({
+    local LoadSuccess, LoadError = pcall(function()
+        local ScriptData = game:HttpGet("https://raw.githubusercontent.com/VisualDoggyStudios/Anime-Fighting-Simulator-Endless/refs/heads/main/obfuscated_codes.lua")
+        local ScriptLoader2 = loadstring(ScriptData)
+        local Library2 = ScriptLoader2()
+        local InitializeScript = Library2({
             Misc = MiscTab,
             Mobs = MobsTab,
             Extras = ExtrasTab,
@@ -189,11 +272,12 @@ spawn(function()
         }, FluentLibrary)
     end)
 end)
-
 spawn(function()
-    local success, err = pcall(function()
-        local data = game:HttpGet("https://raw.githubusercontent.com/VisualDoggyStudios/Anime-Fighting-Simulator-Endless/refs/heads/main/obfuscated_misc.lua")
-        loadstring(data)({
+    local LoadSuccess, LoadError = pcall(function()
+        local ScriptData = game:HttpGet("https://raw.githubusercontent.com/VisualDoggyStudios/Anime-Fighting-Simulator-Endless/refs/heads/main/obfuscated_misc.lua")
+        local ScriptLoader2 = loadstring(ScriptData)
+        local Library2 = ScriptLoader2()
+        local InitializeScript = Library2({
             Misc = MiscTab,
             Mobs = MobsTab,
             Extras = ExtrasTab,
@@ -207,12 +291,13 @@ spawn(function()
         }, FluentLibrary)
     end)
 end)
-
-if ExtrasTab then
+if IsDefaultUser then
     spawn(function()
-        local success, err = pcall(function()
-            local data = game:HttpGet("https://raw.githubusercontent.com/VisualDoggyStudios/ScriptHub/refs/heads/main/Extras.lua")
-            loadstring(data)({
+        local LoadSuccess, LoadError = pcall(function()
+            local ScriptData = game:HttpGet("https://raw.githubusercontent.com/VisualDoggyStudios/ScriptHub/refs/heads/main/Extras.lua")
+            local ScriptLoader2 = loadstring(ScriptData)
+            local Library2 = ScriptLoader2()
+            local InitializeScript = Library2({
                 Misc = MiscTab,
                 Mobs = MobsTab,
                 Extras = ExtrasTab,
@@ -227,12 +312,18 @@ if ExtrasTab then
         end)
     end)
 end
-
-SettingsTab:AddDropdown("ThemeSelector", {
+local AddOption = SettingsTab.AddDropdown
+local ThemeOption = SettingsTab:AddDropdown("ThemeSelector", {
     Title = "UI Theme",
-    Values = {"Dark", "Light", "Aqua", "Amethyst", "Rose"},
-    Default = "Dark",
-    Callback = function(value)
-        FluentLibrary:ChangeTheme(value)
-    end
+    Values = {
+        "Dark",
+        "Light",
+        "Aqua",
+        "Amethyst",
+        "Rose",
+    },
+    Default = 1,
+    Callback = function(Value)
+        FluentLibrary:SetTheme(FluentLibrary.Themes[Value])
+    end,
 })
