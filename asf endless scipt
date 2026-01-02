@@ -17,120 +17,111 @@ local Window = Rayfield:CreateWindow({
     KeySystem = false
 })
 
-local AutofarmTab = Window:CreateTab("Autofarm", "bot")
+local AutofarmTab = Window:CreateTab("Autofarm", "dumbbell")
 local FruitsTab = Window:CreateTab("Fruits", "apple")
 local MobsTab = Window:CreateTab("Mobs", "swords")
 local ChikaraTab = Window:CreateTab("Chikara", "gift")
 local TeleportsTab = Window:CreateTab("Teleports", "map-pin")
 local EspTab = Window:CreateTab("ESP", "eye")
 local CodesTab = Window:CreateTab("Codes", "ticket")
-local MiscTab = Window:CreateTab("Misc", "box")
+local MiscTab = Window:CreateTab("Misc", "package")
 local SettingsTab = Window:CreateTab("Settings", "settings")
 local ExtrasTab = Window:CreateTab("Extras", "crown")
 
 Rayfield:Notify({
     Title = "AFSE Loaded!",
     Content = "All features ready.\nDiscord invite copied.\nGo dominate the game!",
-    Duration = 8
+    Duration = 8,
+    Image = "check"
 })
 
 setclipboard("https://discord.gg/bZv3Ceagqu")
 
--- Autofarm Paragraph
+-- Autofarm Info Paragraph
 AutofarmTab:CreateParagraph({
     Title = "Autofarm Features",
     Content = "Toggle the features below to enable or disable automatic actions."
 })
 
--- Auto Train Strength Toggle
+-- Find the correct remote (common in AFS-style games)
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RemoteEvent = ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("Train") -- Most likely path based on similar games
+
+-- Auto Train Strength (1)
 AutofarmTab:CreateToggle({
     Name = "Auto Train Strength",
     CurrentValue = false,
     Callback = function(Value)
         while Value do
-            local ReplicatedStorage = game:GetService("ReplicatedStorage")
-            local RemoteEvent = ReplicatedStorage.RemoteSignals.EventSignal
-            RemoteEvent:SendEvent("Train", 1)  -- Assuming correct path; adjust if needed based on game
+            RemoteEvent:FireServer(1)
             task.wait(0.1)
         end
     end
 })
 
--- Auto Farm Durability Toggle
+-- Auto Farm Durability (2)
 AutofarmTab:CreateToggle({
     Name = "Auto Farm Durability",
     CurrentValue = false,
     Callback = function(Value)
         while Value do
-            local ReplicatedStorage = game:GetService("ReplicatedStorage")
-            local RemoteEvent = ReplicatedStorage.RemoteSignals.EventSignal
-            RemoteEvent:SendEvent("Train", 2)
+            RemoteEvent:FireServer(2)
             task.wait(0.1)
         end
     end
 })
 
--- Auto Farm Chakra Toggle
+-- Auto Farm Chakra (3)
 AutofarmTab:CreateToggle({
     Name = "Auto Farm Chakra",
     CurrentValue = false,
     Callback = function(Value)
         while Value do
-            local ReplicatedStorage = game:GetService("ReplicatedStorage")
-            local RemoteEvent = ReplicatedStorage.RemoteSignals.EventSignal
-            RemoteEvent:SendEvent("Train", 3)
+            RemoteEvent:FireServer(3)
             task.wait(0.1)
         end
     end
 })
 
--- Auto Farm Sword Toggle
+-- Auto Farm Sword (4)
 AutofarmTab:CreateToggle({
     Name = "Auto Farm Sword",
     CurrentValue = false,
     Callback = function(Value)
         while Value do
-            local ReplicatedStorage = game:GetService("ReplicatedStorage")
-            local RemoteEvent = ReplicatedStorage.RemoteSignals.EventSignal
-            RemoteEvent:SendEvent("Train", 4)
+            RemoteEvent:FireServer(4)
             task.wait(0.1)
         end
     end
 })
 
--- Auto Farm Speed & Agility Toggle
+-- Auto Farm Speed & Agility (5 and 6)
 AutofarmTab:CreateToggle({
     Name = "Auto Farm Speed & Agility",
     CurrentValue = false,
     Callback = function(Value)
         while Value do
-            local ReplicatedStorage = game:GetService("ReplicatedStorage")
-            local RemoteEvent = ReplicatedStorage.RemoteSignals.EventSignal
-            RemoteEvent:SendEvent("Train", 5)
-            RemoteEvent:SendEvent("Train", 6)
+            RemoteEvent:FireServer(5) -- Speed
+            RemoteEvent:FireServer(6) -- Agility
             task.wait(0.1)
         end
     end
 })
 
--- Theme Selector in Settings Tab
+-- Theme Selector
 SettingsTab:CreateDropdown({
     Name = "UI Theme",
-    Options = {"Dark", "Light", "Aqua", "Amethyst", "Rose"},
+    Options = {"Default", "Light", "Dark", "Aqua", "Amethyst", "Rose"},
     CurrentOption = "Dark",
     Callback = function(Option)
-        Rayfield:ChangeTheme(Option)  -- Rayfield supports theme changing via flags or direct method; this assumes similar to Fluent
+        Window:ModifyTheme(Option)
     end
 })
 
--- Note: The external module loads (fruits, mobs, etc.) remain as separate HttpGet/loadstring calls, as they initialize with the tabs passed in a table.
--- They should work similarly with Rayfield tabs, assuming the modules support it or can be adapted minimally.
-
--- Example for one external load (repeat for others):
+-- Load external modules (they expect tabs in a table + library)
 task.spawn(function()
-    local success, err = pcall(function()
-        local scriptData = game:HttpGet("https://raw.githubusercontent.com/VisualDoggyStudios/Anime-Fighting-Simulator-Endless/refs/heads/main/obfuscated_autofarm.lua")
-        loadstring(scriptData)({
+    pcall(function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/VisualDoggyStudios/Anime-Fighting-Simulator-Endless/refs/heads/main/obfuscated_autofarm.lua"))()({
             Autofarm = AutofarmTab,
             Fruits = FruitsTab,
             Mobs = MobsTab,
@@ -141,17 +132,36 @@ task.spawn(function()
             Misc = MiscTab,
             Extras = ExtrasTab,
             Settings = SettingsTab
-        })
+        }, Rayfield)
     end)
 end)
 
--- Repeat the above pattern for the other obfuscated scripts (fruits.lua, mobs.lua, etc.).
--- For Extras:
+-- Repeat for other modules (fruits, mobs, chikara, teleports, ESP, codes, misc)
+-- Example for one more:
+task.spawn(function()
+    pcall(function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/VisualDoggyStudios/Anime-Fighting-Simulator-Endless/refs/heads/main/obfuscated_fruits.lua"))()({
+            Autofarm = AutofarmTab,
+            Fruits = FruitsTab,
+            Mobs = MobsTab,
+            Chikara = ChikaraTab,
+            Teleports = TeleportsTab,
+            ESP = EspTab,
+            Codes = CodesTab,
+            Misc = MiscTab,
+            Extras = ExtrasTab,
+            Settings = SettingsTab
+        }, Rayfield)
+    end)
+end)
+
+-- Do the same for the rest: mobs.lua, chikara.lua, teleports.lua, ESP.lua, codes.lua, misc.lua
+
+-- Extras module
 if ExtrasTab then
     task.spawn(function()
-        local success, err = pcall(function()
-            local scriptData = game:HttpGet("https://raw.githubusercontent.com/VisualDoggyStudios/ScriptHub/refs/heads/main/Extras.lua")
-            loadstring(scriptData)({
+        pcall(function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/VisualDoggyStudios/ScriptHub/refs/heads/main/Extras.lua"))()({
                 Autofarm = AutofarmTab,
                 Fruits = FruitsTab,
                 Mobs = MobsTab,
@@ -162,7 +172,7 @@ if ExtrasTab then
                 Misc = MiscTab,
                 Extras = ExtrasTab,
                 Settings = SettingsTab
-            })
+            }, Rayfield)
         end)
     end)
 end
