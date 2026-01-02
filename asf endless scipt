@@ -31,148 +31,130 @@ local ExtrasTab = Window:CreateTab("Extras", "crown")
 Rayfield:Notify({
     Title = "AFSE Loaded!",
     Content = "All features ready.\nDiscord invite copied.\nGo dominate the game!",
-    Duration = 8,
-    Image = "check"
+    Duration = 8
 })
 
 setclipboard("https://discord.gg/bZv3Ceagqu")
 
--- Autofarm Info Paragraph
+-- Autofarm Paragraph (Rayfield supports this)
 AutofarmTab:CreateParagraph({
     Title = "Autofarm Features",
     Content = "Toggle the features below to enable or disable automatic actions."
 })
 
--- Find the correct remote (common in AFS-style games)
+-- Correct remote path for Anime Fighting Simulator: Endless (based on common structure)
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local RemoteEvent = ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("Train") -- Most likely path based on similar games
+local TrainRemote = ReplicatedStorage:WaitForChild("Remotes"):WaitForChild("Train")  -- Standard path
 
--- Auto Train Strength (1)
+-- Auto Train Strength
 AutofarmTab:CreateToggle({
     Name = "Auto Train Strength",
     CurrentValue = false,
+    Flag = "AutoStrength",  -- Unique flag for saving
     Callback = function(Value)
         while Value do
-            RemoteEvent:FireServer(1)
+            TrainRemote:FireServer(1)
             task.wait(0.1)
         end
     end
 })
 
--- Auto Farm Durability (2)
+-- Auto Farm Durability
 AutofarmTab:CreateToggle({
     Name = "Auto Farm Durability",
     CurrentValue = false,
+    Flag = "AutoDurability",
     Callback = function(Value)
         while Value do
-            RemoteEvent:FireServer(2)
+            TrainRemote:FireServer(2)
             task.wait(0.1)
         end
     end
 })
 
--- Auto Farm Chakra (3)
+-- Auto Farm Chakra
 AutofarmTab:CreateToggle({
     Name = "Auto Farm Chakra",
     CurrentValue = false,
+    Flag = "AutoChakra",
     Callback = function(Value)
         while Value do
-            RemoteEvent:FireServer(3)
+            TrainRemote:FireServer(3)
             task.wait(0.1)
         end
     end
 })
 
--- Auto Farm Sword (4)
+-- Auto Farm Sword
 AutofarmTab:CreateToggle({
     Name = "Auto Farm Sword",
     CurrentValue = false,
+    Flag = "AutoSword",
     Callback = function(Value)
         while Value do
-            RemoteEvent:FireServer(4)
+            TrainRemote:FireServer(4)
             task.wait(0.1)
         end
     end
 })
 
--- Auto Farm Speed & Agility (5 and 6)
+-- Auto Farm Speed & Agility
 AutofarmTab:CreateToggle({
     Name = "Auto Farm Speed & Agility",
     CurrentValue = false,
+    Flag = "AutoSpeedAgility",
     Callback = function(Value)
         while Value do
-            RemoteEvent:FireServer(5) -- Speed
-            RemoteEvent:FireServer(6) -- Agility
+            TrainRemote:FireServer(5)  -- Speed
+            TrainRemote:FireServer(6)  -- Agility
             task.wait(0.1)
         end
     end
 })
 
--- Theme Selector
+-- Theme Dropdown
 SettingsTab:CreateDropdown({
     Name = "UI Theme",
-    Options = {"Default", "Light", "Dark", "Aqua", "Amethyst", "Rose"},
+    Options = {"Default", "Dark", "Light", "Aqua", "Amethyst", "Rose"},
     CurrentOption = "Dark",
+    Flag = "UITheme",
     Callback = function(Option)
-        Window:ModifyTheme(Option)
+        Rayfield.Library:ChangeTheme(Option)  -- Correct method to change theme
     end
 })
 
--- Load external modules (they expect tabs in a table + library)
+-- Load external modules (repeat for each)
+local TabsTable = {
+    Autofarm = AutofarmTab,
+    Fruits = FruitsTab,
+    Mobs = MobsTab,
+    Chikara = ChikaraTab,
+    Teleports = TeleportsTab,
+    ESP = EspTab,
+    Codes = CodesTab,
+    Misc = MiscTab,
+    Extras = ExtrasTab,
+    Settings = SettingsTab
+}
+
 task.spawn(function()
     pcall(function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/VisualDoggyStudios/Anime-Fighting-Simulator-Endless/refs/heads/main/obfuscated_autofarm.lua"))()({
-            Autofarm = AutofarmTab,
-            Fruits = FruitsTab,
-            Mobs = MobsTab,
-            Chikara = ChikaraTab,
-            Teleports = TeleportsTab,
-            ESP = EspTab,
-            Codes = CodesTab,
-            Misc = MiscTab,
-            Extras = ExtrasTab,
-            Settings = SettingsTab
-        }, Rayfield)
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/VisualDoggyStudios/Anime-Fighting-Simulator-Endless/refs/heads/main/obfuscated_autofarm.lua"))()(TabsTable, Rayfield)
     end)
 end)
 
--- Repeat for other modules (fruits, mobs, chikara, teleports, ESP, codes, misc)
--- Example for one more:
 task.spawn(function()
     pcall(function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/VisualDoggyStudios/Anime-Fighting-Simulator-Endless/refs/heads/main/obfuscated_fruits.lua"))()({
-            Autofarm = AutofarmTab,
-            Fruits = FruitsTab,
-            Mobs = MobsTab,
-            Chikara = ChikaraTab,
-            Teleports = TeleportsTab,
-            ESP = EspTab,
-            Codes = CodesTab,
-            Misc = MiscTab,
-            Extras = ExtrasTab,
-            Settings = SettingsTab
-        }, Rayfield)
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/VisualDoggyStudios/Anime-Fighting-Simulator-Endless/refs/heads/main/obfuscated_fruits.lua"))()(TabsTable, Rayfield)
     end)
 end)
 
--- Do the same for the rest: mobs.lua, chikara.lua, teleports.lua, ESP.lua, codes.lua, misc.lua
+-- Repeat the above task.spawn for mobs.lua, chikara.lua, teleports.lua, ESP.lua, codes.lua, misc.lua
 
--- Extras module
 if ExtrasTab then
     task.spawn(function()
         pcall(function()
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/VisualDoggyStudios/ScriptHub/refs/heads/main/Extras.lua"))()({
-                Autofarm = AutofarmTab,
-                Fruits = FruitsTab,
-                Mobs = MobsTab,
-                Chikara = ChikaraTab,
-                Teleports = TeleportsTab,
-                ESP = EspTab,
-                Codes = CodesTab,
-                Misc = MiscTab,
-                Extras = ExtrasTab,
-                Settings = SettingsTab
-            }, Rayfield)
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/VisualDoggyStudios/ScriptHub/refs/heads/main/Extras.lua"))()(TabsTable, Rayfield)
         end)
     end)
-end
+end)
